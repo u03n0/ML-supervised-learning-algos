@@ -1,7 +1,6 @@
 import re
 import emoji
 
-from src.utils import save_data
 from typing import List, Callable
 
 import pandas as pd
@@ -43,7 +42,7 @@ def apply_remove_emojis(df: pd.DataFrame)-> Callable:
     """
     new = df.copy()
     new['about'] = new['about'].apply(remove_emojis)
-    return convert_to_list(new)
+    return apply_convert_to_list(new)
 
 def convert_to_list(text:str)-> List[str]:
     """ Removal of unwanted words and characters from strings.

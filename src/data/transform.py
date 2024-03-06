@@ -1,7 +1,7 @@
 import pandas as pd
-from src.utils import get_fullpath, save_data
-from cleaning import clean_data
-from preprocessing import process_interim
+from utils import create_abs_path, save_data
+from data.cleaning import clean_data
+from data.preprocessing import process_interim
 
 
 def transform_data(df: pd.DataFrame)-> pd.DataFrame:
@@ -10,16 +10,16 @@ def transform_data(df: pd.DataFrame)-> pd.DataFrame:
     returns pre-processed data
     """
 
-    processed = get_fullpath(df, 'processed')
+    processed_path = create_abs_path('processed')
 
-    if processed.exists():
-        return pd.read_csv(processed)
+    if processed_path.exists():
+        return pd.read_csv(processed_path)
     
-    elif get_fullpath(df, 'interim').exists():
-        interim = get_fullpath(df, 'interim')
-        current_df = pd.read_csv(interim)
-        processed = process_interim(current_df)
-        save_data(processed, 'processed')
+    elif create_abs_path('interim').exists():
+        interim_path = create_abs_path('interim')
+        current_df = pd.read_csv(interim_path)
+        processed_df = process_interim(current_df)
+        save_data(processed_df, 'processed')
         return transform_data(df)
     
     else:
