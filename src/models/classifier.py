@@ -1,16 +1,15 @@
 import pandas as pd
 from transformers import  AdamW
-from torch.utils.data import DataLoader, TensorDataset, random_split
+from torch.utils.data import DataLoader, random_split
 from models.features import build_dataset, load_model_tokenizer, get_features
-from transformers import BertTokenizer, BertForSequenceClassification
-
+from pathlib import Path
 import torch
 
 
 
 def run_model(df: pd.DataFrame):
-    
-    output_dir = "../../models/fine_tuned_model"
+
+    output_dir = Path("/models/fine_tuned_model/")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer, model = load_model_tokenizer(output_dir, device)
     model.to(device)
@@ -49,10 +48,10 @@ def run_model(df: pd.DataFrame):
             logits = outputs.logits
             predicted_labels = torch.argmax(logits, dim=1)
 
-            predictions.extend(predicted_labels.gpu().numpy())
-            true_labels.extend(batch[2].gpu().numpy())
+            predictions.extend(predicted_labels.cpu().numpy())
+            true_labels.extend(batch[2].detach().cpu().numpy())
 
     
-    model.save_pretrained(output_dir)
+    # model.save_pretrained(output_dir)
 
     return predictions, true_labels
