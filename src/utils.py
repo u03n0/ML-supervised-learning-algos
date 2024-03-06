@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Optional
+from typing import Optional, Boolean
 from pathlib import Path
 
 
@@ -17,11 +17,11 @@ def build_filename(df: pd.DataFrame, prefix: str)-> str:
     """
     return prefix + "_" + df.file_name
 
-def check_if_exists(df: pd.DataFrame, sub_folder: str):
+def get_fullpath(df: pd.DataFrame, sub_folder: str):
     """ Determines if a csv file exists within /data/particular_sub_folder/
     """
     full_path = create_abs_path(df, sub_folder)
-    return full_path.exists()
+    return full_path
 
 def create_abs_path(df, sub_folder):
     """Builds an absolute path for a csv file
