@@ -5,7 +5,7 @@ from visualization import plot_confusion_matrix
 
 
 path = '../data/raw/internship_challenge - dataset.csv'
-
+#test
 df = pd.read_csv(path)
 # data is read to be used in model
 fs_df = transform_data(df)
