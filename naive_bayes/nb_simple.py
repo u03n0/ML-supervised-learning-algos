@@ -1,4 +1,3 @@
-import time
 from random import shuffle
 from collections import namedtuple
 from typing import List, Dict
@@ -6,7 +5,6 @@ from typing import List, Dict
 from utils import build_dataset, train_test_split
 
 
-start = time.time()
 Email = namedtuple('Email', 'category, text')
 email_path = '../data/emails/email.csv'
 
@@ -81,4 +79,3 @@ for prediction in zip(results, test_data):
         correct += 1 
 
 print(f"the accuracy is {correct / len(test_data)}")
-print(time.time())
