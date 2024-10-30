@@ -1,2 +1,2 @@
-# binary-classifier
-A look at ML fundamentals: In particular, binary classification.
+# Fundamental Machine Learning Algorithms : Supervised Learning
+
