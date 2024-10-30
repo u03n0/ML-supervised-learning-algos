@@ -17,7 +17,17 @@ def tf(term: str, document: str):
     """ Term Frequency calculator.
     Relative frequency of term t within a document d 
     """
-    return document.split().count(term)
+    n = len(document.split())
+    freq = 0
+    for word in document.split():
+        if word == term:
+            freq += 1
+
+    if freq:
+        return (freq / n) + 1
+    else:
+        return 1 / n 
+
 
 def idf(term: str, corpus: List[namedtuple]):
     """ Inverse Document Frequency. Log of number of 

@@ -34,8 +34,8 @@ def cosine_similarity(a, b):
     """
 
     """
-    dot_prouct = np.dot(a, b)
-    return dot_prouct/ (norm(a)*norm(b))
+    dot_product = np.dot(a, b)
+    return dot_product/ (norm(a)*norm(b))
 
 
 
