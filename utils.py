@@ -6,11 +6,11 @@ from math import log
 
 
 
-def build_dataset(path: str, nt: namedtuple)-> namedtuple:
-    """ Reads csv file and builds dataset as a list of namedtuples
+def build_dataset(path: str)-> Dict[str, str]:
+    """ Reads csv file and builds dataset as a list of dicts
     """
     with open(path, 'r') as file:
-        return [nt(*row) for row in csv.reader(file) if all(row)][1:]
+        return [dict(*row) for row in csv.reader(file) if all(row)][1:]
 
     
 def tf(term: str, document: str):

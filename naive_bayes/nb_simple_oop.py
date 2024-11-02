@@ -1,23 +1,16 @@
-import time
-from collections import namedtuple
-
+from pathlib import Path
 from utils import build_dataset, train_test_split, clean_dataset
-
-
-start = time.time()
-Email = namedtuple('Email', 'category, text')
-email_path = '../data/emails/email.csv'
-
 
 
 class NaiveBayesClassifier():
 
-    def __init__(self):
-        pass
+    def __init__(self, alpha=1):
+        self.alpha = alpha
+
 
     def fit(self, train_data):
-        self.hams = [email for email in train_data if email.category == 'ham']
-        self.spams = [email for email in train_data if email.category == 'spam']
+        self.hams = [dict for dict in train_data if 'ham' in dict]
+        self.spams = [dict for dict in train_data if 'spam' in dict]
         self.ham_proba = len(self.hams) / len(train_data)
         self.spam_proba = 1.0 - self.ham_proba
         self.ham_histo = self.get_historgram("ham")
@@ -28,22 +21,24 @@ class NaiveBayesClassifier():
     def predict(self, test_data):
         results = []
         for email in test_data:
-            product_ham = self.compute_product(email.text, 'ham')
-            product_spam = self.compute_product(email.text, 'spam')
-            results.append("spam" if product_spam > product_ham else "ham")
+            y_pred = list(email.keys())[0]
+            product_ham = self.compute_product(email, 'ham')
+            product_spam = self.compute_product(email, 'spam')
+            results.append(("spam" if product_spam > product_ham else "ham", y_pred))
         return results
 
-    def compute_product(self, text, category):
+    def compute_product(self, dict, category):
         product = 1 
         histogram = self.ham_histo if category == 'ham' else self.spam_histo
         num_words = self.num_ham_words if category == 'ham' else self.num_spam_words
         proba = self.ham_proba if category == 'ham' else self.spam_proba
 
-        for word in text:
-            if word in histogram:
-                product *= ((histogram[word] + 1) / num_words)
-            else:
-                product *= 1 / num_words
+        for word_list in dict.values():
+            for word in word_list:
+                if word in histogram:
+                    product *= ((histogram[word] + self.alpha) / num_words)
+                else:
+                    product *= self.alpha / num_words
         return product * proba
 
 
@@ -53,30 +48,31 @@ class NaiveBayesClassifier():
         """
         word_dict = {}
         dataset = self.hams if category == 'ham' else self.spams
-        for email in dataset:
-            for word in email.text:
-                if word not in word_dict:
-                    word_dict[word] = 1 
-                else:
-                    word_dict[word] += 1 
-
+        for document in dataset:
+            for word_list in document.values():
+                for word in word_list:
+                    if word not in word_dict:
+                        word_dict[word] = 1 
+                    else:
+                        word_dict[word] += 1 
         return word_dict
 
 
 # Create the dataset from a csv file
-dataset = build_dataset(email_path, Email)
+email_path = Path('../data/emails/email.csv')
+dataset = build_dataset(email_path)
 # Clean the data
-cleaned = clean_dataset(dataset, Email)
+cleaned = clean_dataset(dataset)
 # Train test split_index
 train_data, test_data = train_test_split(cleaned, 0.8) 
+# Intialize classifier
 model = NaiveBayesClassifier()
 model.fit(train_data)
 predictions = model.predict(test_data)
 # Get counts
 correct = 0 
-for prediction in zip(predictions, test_data):
-    if prediction[0] == prediction[1].category:
+for y_hat, y_pred in predictions:
+    if y_hat == y_pred:
         correct += 1 
 
 print(f"the accuracy is {correct / len(test_data)}")
-print(time.time()-start)
