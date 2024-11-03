@@ -1,74 +1,89 @@
 import sys
 sys.path.append("../")
-from typing import List, Tuple
+from pathlib import Path
+from typing import List, Tuple, Dict
 from numpy.linalg import norm
 import numpy as np
-from collections import namedtuple
-from utils import build_dataset, tf_idf, train_test_split
+from utils import build_dataset, train_test_split, clean_dataset, idf, tf
+from numba import jit
 
 
-Email = namedtuple('Email', "category, text")
-path_to_data = "../data/emails/email.csv"
-
-dataset = build_dataset(path_to_data, Email)
-
-def build_tf_idf_matrix(corpus: List[namedtuple])-> Tuple[List, List]:
+def build_tf_idf_matrix(corpus: List[Dict]) -> np.ndarray:
     """
-
+    Builds a TF-IDF matrix from a corpus of documents.
+    Each row represents a document, and each column represents a term.
     """
+    # Step 1: Create a sorted vocabulary from the corpus
+    vocab = sorted(set(word for doc in corpus for word in doc.values()))
+    vocab_size = len(vocab)
+    num_documents = len(corpus)
+    idf_dict = {term: idf(term, corpus) for term in vocab}
+    # Step 2: Initialize a zero matrix with dtype=np.float32
+    tf_idf_matrix = np.zeros((num_documents, vocab_size), dtype=np.float32)
 
-    vocab = sorted(set(word for doc in corpus for word in doc.text.split()))
+    # Step 3: Populate the matrix with TF-IDF values
+    for doc_index, document in enumerate(corpus):
+        for term_index, term in enumerate(vocab):
+            tf_idf_matrix[doc_index, term_index] = tf(term, document.values()) * idf_dict[term]
 
-    tf_idf_matrix = []
-    for document in corpus:
-        vector = [0] * len(vocab)
+    return tf_idf_matrix
 
-        for i, term in enumerate(vocab):
-            vector[i] = tf_idf(term, document.text, corpus)
-
-        tf_idf_matrix.append(vector)
-
-    return tf_idf_matrix, vocab
-
-def cosine_similarity(a, b):
-    """
-
+@jit(nopython=True)
+def cosine_similarity(a, b) -> float:
+    """ The dot product of two vectors (a, b) divided
+    by the product of the magnitudes of the vectors.
+    cosine similarity = A * B / ||A|| * ||B||
     """
     dot_product = np.dot(a, b)
-    return dot_product/ (norm(a)*norm(b))
+    return dot_product / (norm(a)* norm(b))
 
 
-
-def classify_point(dataset, point, k=3):
-    
+def classify_point(dataset: List[Tuple], point, k: int = 3)-> str:
+    """ Finds the top K cosine similarities from the point to all other
+    points in the dataset. A point is a vector representation of a document.
+    """
     distance = []
     for tup in dataset:
-        dist = cosine_similarity(point, tup[0])
-        distance.append((dist, tup[1].category))
+        array, dict = tup
+        label = list(dict.keys())[0]
+        dist = cosine_similarity(point, array)
+        distance.append((dist, label))
 
     distance = sorted(distance)[:k]
     freq1 = 0 
     freq2 = 0 
 
     for d in distance:
-        if d[1] == 'ham':
+        _, label = d
+        if label == 'ham':
             freq1 += 1 
-        elif d[1] == 'spam':
+        elif label == 'spam':
             freq2 += 1 
     return 'ham' if freq1 > freq2 else "spam"
 
 
 
-
-            
-tf_idf_matrix, vocab = build_tf_idf_matrix(dataset[:300])
-small_data = dataset[:300]
-encoded_data = list(zip(tf_idf_matrix, small_data))
+# Load data from csv file
+path_to_data = Path("../Data/emails/email.csv")
+with open(Path("../Data/stopwords_en.txt"), 'r') as file:
+    stopwords = [file.read().replace('\n', ',')]
+ 
+dataset = build_dataset(path_to_data)
+# Clean dataset
+clean = clean_dataset(dataset, stopwords)
+# Build tf_idf matrix map
+tf_idf_matrix = build_tf_idf_matrix(dataset)
+# Newly encoded dataset
+encoded_data = list(zip(tf_idf_matrix, clean))
+# Train test split
 train_data, test_data = train_test_split(encoded_data, 0.8)
-
+# Make predictions
 correct = 0
 for example in test_data:
-    if classify_point(train_data, example[0], k=5) == example[1].category:
+    vector, dict = example
+    y_pred = list(dict.keys())[0]
+    y_hat = classify_point(train_data, vector, k=5)
+    if y_hat == y_pred:
         correct += 1 
 
 print(f"accuracy is : {correct / len(test_data)}")
