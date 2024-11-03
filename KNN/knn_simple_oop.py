@@ -6,7 +6,7 @@ from typing import List, Tuple
 from collections import namedtuple
 from utils import build_dataset, tf_idf, train_test_split, idf, tf
 
-
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 class KNN():
@@ -31,7 +31,7 @@ class KNN():
         distance = []
 
         for tup in self.points:
-            dist = self.cosine_similarity(point, tup[0])
+            dist = cosine_similarity(point, tup[0])
             distance.append((dist, tup[1].category))
 
         distance = sorted(distance)[:self.k]
