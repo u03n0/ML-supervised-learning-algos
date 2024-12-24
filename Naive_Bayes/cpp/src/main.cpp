@@ -1,19 +1,24 @@
 #include <iostream>
 #include <vector>
 #include "../include/utils.h"
+#include <unordered_map>
+
 
 
 int main () {
-
   std::vector<std::string> texts 
-    = {"Michi went to the park today and saw a bird.", "I love my cat, hes perfect.",
-    "Michi is a cat and he is mine.", "A cat is mans bestfriend, and Michi is my cat."
-    };
-
-  std::string str = "Test string..";
-  std::vector<std::string> frag = split(str, ' ');
-  for (std::string elem : frag) {
-    std::cout << elem << std::endl;
+    = {"The cat plays with the red ball.", "I have a cat.", "The dog chases the cat."};
+  std::unordered_map<std::string, int> myUnorderedMap;
+ // iterate over vector 
+  int i = 1;
+  for (std::string elem : texts) {
+    std::vector <std::string> chopped = split(elem, ' '); // create vector of strings with blank space as delimter.
+      for (const std::string& word : chopped){ // for each word (element in vector) 
+          myUnorderedMap[removePunctuation(lower_str(word))]++;
+      }
+  }
+  for (const auto& pair : myUnorderedMap) {
+    std::cout << pair.first << "->" << pair.second << std::endl;
   }
   return 0;
 }

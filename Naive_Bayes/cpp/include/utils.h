@@ -4,6 +4,7 @@
 #include <vector>
 
 
-//std::string lower_str (std::string str);
-std::vector<std::string> split (std::string &s, char delim);    
+std::string lower_str(std::string str);
+std::vector<std::string> split(std::string &s, char delim);    
+std::string removePunctuation(const std::string& word);
 #endif
