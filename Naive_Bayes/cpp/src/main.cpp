@@ -10,7 +10,7 @@ int main () {
     "Michi is a cat and he is mine.", "A cat is mans bestfriend, and Michi is my cat."
     };
 
-  std::string str = "Michi is GAY.";
+  std::string str = "Test string..";
   std::vector<std::string> frag = split(str, ' ');
   for (std::string elem : frag) {
     std::cout << elem << std::endl;
