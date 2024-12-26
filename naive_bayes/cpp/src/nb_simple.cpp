@@ -3,6 +3,8 @@
 #include "../include/utils.h"
 #include "../include/processesing.h"
 #include <unordered_map>
+#include <chrono>
+
 
 using str_vec_t = std::vector<std::string>;
 using map_str_vec_t = std::unordered_map<std::string, str_vec_t>;
@@ -13,6 +15,10 @@ using map_int_t = std::unordered_map<std::string, int>;
 
 
 int main () {
+  using namespace std::chrono;
+    
+  auto start = high_resolution_clock::now();
+
   std::string projectRoot {getProjectRoot()}; // Get root path of project
   std::string filename {projectRoot + "/data/emails/email.csv"}; // filename = root + path to data
                                                                  //
@@ -71,5 +77,8 @@ int main () {
     }
   }
   std::cout << "Accuracy: " << (double) correct / test_data.size() << "%" << std::endl;
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<milliseconds>(stop - start);
+  std::cout << "Execution time: " << duration.count() << " milliseconds" << std::endl;
   return 0;
 }

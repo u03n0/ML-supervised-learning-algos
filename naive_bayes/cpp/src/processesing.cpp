@@ -20,12 +20,23 @@ using map_int_t = std::unordered_map<std::string, int>;
 
 
 
-double compute_product(str_vec_t words, map_int_t dict, int num_words, double proba, int alpha) {
-  double product {1.0};
-  for (std::string word : words) {
-      product *= dict.find(word) != dict.end()? (dict[word] + alpha) / num_words : alpha / num_words; 
+double compute_product(str_vec_t text, 
+                       map_int_t histogram, 
+                       int num_words, 
+                       double proba, 
+                       int alpha = 1) {
+    double product = 1.0;
+
+    for (const std::string& word : text) {
+        // If the word is in the histogram, use its frequency. If not, apply Laplace smoothing.
+        if (histogram.find(word) != histogram.end()) {
+            product *= (static_cast<double>(histogram.at(word)) + alpha) / num_words;
+        } else {
+            product *= static_cast<double>(alpha) / num_words;
+        }
     }
-  return product * proba;
+
+    return product * proba;
 }
 
 int vocabulary_counter(map_int_t data) {

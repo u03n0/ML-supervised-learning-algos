@@ -2,6 +2,9 @@ from typing import List, Dict
 
 from utils import build_dataset, train_test_split, clean_dataset
 
+import time
+
+start_time = time.time()
 
 def build_historgram(dataset: List[Dict[str, List[str]]])-> Dict[str, int]:
     """ Builds a histogram, which is a dict with keys being unique words
@@ -68,3 +71,6 @@ for y_hat, y_pred in results:
         correct += 1 
 
 print(f"the accuracy is {correct / len(test_data)}")
+end_time = time.time()
+execution_time = end_time - start_time
+print(f"Execution time: {execution_time} milliseconds")
