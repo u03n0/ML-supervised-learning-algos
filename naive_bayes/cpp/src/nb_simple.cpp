@@ -1,18 +1,25 @@
 #include <iostream>
 #include <vector>
 #include "../include/utils.h"
+#include "../include/processesing.h"
 #include <unordered_map>
 
-using VectorOfSVMs = std::vector<StringVectorMap>; // Vector of StringVectorMaps
+using str_vec_t = std::vector<std::string>;
+using map_str_vec_t = std::unordered_map<std::string, str_vec_t>;
+using vec_msv_t = std::vector<map_str_vec_t>; // Vector of map_str_vec_t
+using map_int_t = std::unordered_map<std::string, int>;
+
+
+
 
 int main () {
   std::string projectRoot {getProjectRoot()}; // Get root path of project
   std::string filename {projectRoot + "/data/emails/email.csv"}; // filename = root + path to data
                                                                  //
-  VectorOfSVMs  data; // Create map
+  vec_msv_t  data; // Create map
   data = parseCSV(filename); // Read csv file into array<unordered_map<string, array<string>> 
                                                                           //
-  VectorOfSVMs train_data, test_data; // Initialize train and test datasets
+  vec_msv_t train_data, test_data; // Initialize train and test datasets
   std::tie(train_data, test_data) = train_test_split(data, 0.8); // Split data
   
   // Get probabilities of ham and spam in training.
@@ -26,7 +33,7 @@ int main () {
   double ham_proba {static_cast<double>(len_ham) / train_data.size()};
   double spam_proba {1.0 - ham_proba};
   // Separate ham and spam data from training.
-  VectorOfSVMs ham_data, spam_data;
+  vec_msv_t ham_data, spam_data;
   
   for (const auto& dict : train_data) {
     if (dict.find("ham") != dict.end()) {
@@ -38,7 +45,7 @@ int main () {
   }
 
   // Create histograms for both ham and spam in training
-  std::unordered_map<std::string, int> ham_histogram, spam_histogram; // Create histogram map
+  map_int_t ham_histogram, spam_histogram; // Create histogram map
   ham_histogram = build_histogram(ham_data);
   spam_histogram = build_histogram(spam_data);
   

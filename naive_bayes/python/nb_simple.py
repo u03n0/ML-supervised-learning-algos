@@ -36,7 +36,7 @@ def compute_product(text: Dict[str, List[str]], histogram: Dict[str, int], num_w
 
 
 # Create the dataset from a csv file
-email_path = '../data/emails/email.csv'
+email_path = 'data/emails/email.csv'
 dataset = build_dataset(email_path)
 # Clean the data
 clean = clean_dataset(dataset)
