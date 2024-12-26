@@ -7,7 +7,7 @@ using VectorOfSVMs = std::vector<StringVectorMap>; // Vector of StringVectorMaps
 
 int main () {
   std::string projectRoot {getProjectRoot()}; // Get root path of project
-  std::string filename {projectRoot + "/Data/emails/email.csv"}; // filename = root + path to data
+  std::string filename {projectRoot + "/data/emails/email.csv"}; // filename = root + path to data
                                                                  //
   VectorOfSVMs  data; // Create map
   data = parseCSV(filename); // Read csv file into array<unordered_map<string, array<string>> 
