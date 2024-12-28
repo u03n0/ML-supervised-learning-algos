@@ -1,5 +1,5 @@
 from pathlib import Path
-from utils import build_dataset, train_test_split, clean_dataset
+from utils.py_utils import build_dataset, train_test_split, clean_dataset
 
 
 class NaiveBayesClassifier():
@@ -59,7 +59,7 @@ class NaiveBayesClassifier():
 
 
 # Create the dataset from a csv file
-email_path = Path('../data/emails/email.csv')
+email_path = Path('data/emails/email.csv')
 dataset = build_dataset(email_path)
 # Clean the data
 cleaned = clean_dataset(dataset)

@@ -1,10 +1,9 @@
 from typing import List, Dict
-
-from utils import build_dataset, train_test_split, clean_dataset
-
+from utils.py_utils import build_dataset, train_test_split, clean_dataset
 import time
 
 start_time = time.time()
+
 
 def build_historgram(dataset: List[Dict[str, List[str]]])-> Dict[str, int]:
     """ Builds a histogram, which is a dict with keys being unique words
