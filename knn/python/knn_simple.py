@@ -1,10 +1,8 @@
-import sys
-sys.path.append("../")
 from pathlib import Path
 from typing import List, Tuple, Dict
 from numpy.linalg import norm
 import numpy as np
-from utils import build_dataset, train_test_split, clean_dataset, idf, tf
+from utils.py_utils  import build_dataset, train_test_split, clean_dataset, idf, tf
 from numba import jit
 
 
@@ -64,8 +62,8 @@ def classify_point(dataset: List[Tuple], point, k: int = 3)-> str:
 
 
 # Load data from csv file
-path_to_data = Path("../Data/emails/email.csv")
-with open(Path("../Data/stopwords_en.txt"), 'r') as file:
+path_to_data = Path("data/emails/email.csv")
+with open(Path("data/stopwords_en.txt"), 'r') as file:
     stopwords = [file.read().replace('\n', ',')]
  
 dataset = build_dataset(path_to_data)

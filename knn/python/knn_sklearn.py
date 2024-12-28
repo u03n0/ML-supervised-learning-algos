@@ -6,7 +6,7 @@ import pandas as pd
 
 
 # Read data into a Pandas DataFrame
-df = pd.read_csv("../data/emails/email.csv")
+df = pd.read_csv("data/emails/email.csv")
 # Select features (X) and labels (y)
 X = df['Message']
 y = df['Category']

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include "../include/utils.h"
+#include "cpp_utils.h"
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -23,7 +23,6 @@ std::pair<vec_msv_t, vec_msv_t> train_test_split(vec_msv_t data, double ratio) {
   std::random_device rd;  // Get a random seed from the hardware (if available)
   std::default_random_engine rng(rd());  // Default random engine seeded with random_device
   std::shuffle(data.begin(), data.end(), rng);
-  
   double split_index  { ratio * data.size()};
   vec_msv_t train_data {data.begin(), data.begin() + (int) split_index};
   vec_msv_t test_data {data.begin() + (int) split_index, data.end()};
