@@ -52,15 +52,15 @@ def build_tf_idf_matrix(corpus: List[namedtuple])-> Tuple[List, List]:
 
     """
 
-    vocab = sorted({word.lower() for doc in corpus for word in doc.text.split() if word.isalpha()})
-    
+    vocab = sorted({word.lower() for doc in corpus for word in " ".join(list(doc.values())).split() if word.isalpha()})
+   
     idf_dict = {term: idf(term, corpus) for term in vocab} 
     tf_idf_matrix = []
     for document in corpus:
         vector = [0] * len(vocab)
 
         for i, term in enumerate(vocab):
-            vector[i] = tf(term, document.text) * idf_dict[term]
+            vector[i] = tf(term, list(document.values())) * idf_dict[term]
 
         tf_idf_matrix.append(vector)
 

@@ -4,15 +4,15 @@ from utils.py_utils import build_dataset, train_test_split, clean_dataset
 
 class NaiveBayesClassifier():
 
-    def __init__(self, alpha=1):
+    def __init__(self, alpha: int =1):
         self.alpha = alpha
 
 
-    def fit(self, train_data):
-        self.hams = [dict for dict in train_data if 'ham' in dict]
-        self.spams = [dict for dict in train_data if 'spam' in dict]
-        self.ham_proba = len(self.hams) / len(train_data)
-        self.spam_proba = 1.0 - self.ham_proba
+    def fit(self, train_data: list[dict[str, list[str]]]):
+        self.hams: list[dict[str, list[str]]] = [dict for dict in train_data if 'ham' in dict]
+        self.spams: list[dict[str, list[str]]] = [dict for dict in train_data if 'spam' in dict]
+        self.ham_proba: float = len(self.hams) / len(train_data)
+        self.spam_proba: float = 1.0 - self.ham_proba
         self.ham_histo = self.get_historgram("ham")
         self.spam_histo = self.get_historgram("spam")
         self.num_ham_words = sum(self.ham_histo.values())
@@ -59,7 +59,7 @@ class NaiveBayesClassifier():
 
 
 # Create the dataset from a csv file
-email_path = Path('data/emails/email.csv')
+email_path: str = 'data/emails/email.csv'
 dataset = build_dataset(email_path)
 # Clean the data
 cleaned = clean_dataset(dataset)

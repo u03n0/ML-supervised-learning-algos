@@ -5,11 +5,11 @@ import time
 start_time = time.time()
 
 
-def build_historgram(dataset: List[Dict[str, List[str]]])-> Dict[str, int]:
+def build_historgram(dataset: list[dict[str, list[str]]])-> dict[str, int]:
     """ Builds a histogram, which is a dict with keys being unique words
     and values being the occurence of said word in that category (ham, spam)
     """
-    word_dict = {}
+    word_dict: Dict = {}
     for dict in dataset:
         for word_list in dict.values():
             for word in word_list:
@@ -19,7 +19,7 @@ def build_historgram(dataset: List[Dict[str, List[str]]])-> Dict[str, int]:
                     word_dict[word] += 1 
     return word_dict
 
-def compute_product(text: Dict[str, List[str]], histogram: Dict[str, int], num_words: int, proba: float, alpha: int = 1):
+def compute_product(text: dict[str, list[str]], histogram: dict[str, int], num_words: int, proba: float, alpha: int = 1)->float:
         """ The product of a document is computed by multiplying the histogram value for each term. Finally the 
         pronbability of a given class is also multiplied. 
 
@@ -27,7 +27,7 @@ def compute_product(text: Dict[str, List[str]], histogram: Dict[str, int], num_w
         if a word is found in a histogram.
             Ex: document 'The dog' = 'The' (0.8922)+alpha * 'dog' (0.034)+alpha * probability of ham (0.84) = 1.643489
         """
-        product = 1 
+        product: float = 1.0 
         for word_list in text.values():
             for word in word_list:
                 if word in histogram:
@@ -38,38 +38,38 @@ def compute_product(text: Dict[str, List[str]], histogram: Dict[str, int], num_w
 
 
 # Create the dataset from a csv file
-email_path = 'data/emails/email.csv'
-dataset = build_dataset(email_path)
+email_path: str = 'data/emails/email.csv'
+dataset: list[dict[str, str]] = build_dataset(email_path)
 # Clean the data
-clean = clean_dataset(dataset)
+clean: list[dict[str, list[str]]] = clean_dataset(dataset)
 # Train test split_index
 train_data, test_data = train_test_split(clean, 0.8) 
 # Get probabilities of ham and spam given total emails
-len_ham = sum([1 for dict in train_data if 'ham' in dict])
-ham_proba = len_ham / len(train_data) 
-spam_proba = 1.0 - ham_proba
+len_ham: int = sum([1 for dict in train_data if 'ham' in dict])
+ham_proba: float = len_ham / len(train_data) 
+spam_proba: float = 1.0 - ham_proba
 
 # Make histograms 
-spam_histo = build_historgram([dict for dict in train_data if 'spam' in dict])
-ham_histo = build_historgram([dict for dict in train_data if 'ham' in dict])
+spam_histo: dict[str, int] = build_historgram([dict for dict in train_data if 'spam' in dict])
+ham_histo: dict[str, int] = build_historgram([dict for dict in train_data if 'ham' in dict])
 
 # Total words in spam and ham
-num_spam_words = sum(spam_histo.values())
-num_ham_words = sum(ham_histo.values())
+num_spam_words: int = sum(spam_histo.values())
+num_ham_words: int = sum(ham_histo.values())
 # Evaluation
-results = []
+results: list = []
 for email in test_data:
-    y_pred = list(email.keys())[0]
-    product_ham = compute_product(email, ham_histo, num_ham_words, ham_proba)
-    product_spam = compute_product(email, spam_histo, num_spam_words, spam_proba)
+    y_pred: str = list(email.keys())[0]
+    product_ham: float = compute_product(email, ham_histo, num_ham_words, ham_proba)
+    product_spam: float = compute_product(email, spam_histo, num_spam_words, spam_proba)
     results.append(("spam" if product_spam > product_ham else "ham", y_pred))
     
-correct = 0 
+correct: int = 0 
 for y_hat, y_pred in results:
     if y_hat == y_pred:
         correct += 1 
 
 print(f"the accuracy is {correct / len(test_data)}")
-end_time = time.time()
-execution_time = end_time - start_time
+end_time: float = time.time()
+execution_time: float = end_time - start_time
 print(f"Execution time: {execution_time} milliseconds")

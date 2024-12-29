@@ -4,10 +4,10 @@ from math import log
 from pathlib import Path
 
 
-def build_dataset(path: str)-> Dict[str, str]:
+def build_dataset(path: str)-> list[dict[str, str]]:
     """ Reads csv file and builds dataset as a list of dicts
     """
-    l = []
+    l: list = []
     with open(path, 'r') as file:
        for line in file:
            line = line.replace('\n', '')
@@ -21,8 +21,8 @@ def tf(term: str, document: str):
     """ Term Frequency calculator.
     Relative frequency of term t within a document d 
     """
-    n = len(document)
-    freq = 0
+    n: int = len(document)
+    freq: int = 0
     for word in document:
         if word == term:
             freq += 1
@@ -32,24 +32,24 @@ def tf(term: str, document: str):
         return 1 / n 
 
 
-def idf(term: str, corpus: List[str]):
+def idf(term: str, corpus: list[dict[str, list[str]]])-> float:
     """ Inverse Document Frequency. Log of number of 
     documents (N) in corpus (D) over 1 + the number of 
     documents (d) within the corpus (D) that the term (t)
     appears in. 
     """
-    n = len(corpus)
-    docs_with_term_count = sum(1 for doc in corpus if term in doc.values())
+    n: int = len(corpus)
+    docs_with_term_count: int = sum(1 for doc in corpus if term in doc.values())
     return log(n / (1 + docs_with_term_count)) + 1
 
 
-def tf_idf(term: str, document: str, corpus: List):
+def tf_idf(term: str, document: str, corpus: list[dict[str, list[str]]])-> float:
     """ Term Frequency-Inverse Document Frequency.
     """
     return tf(term, document) * idf(term, corpus)
 
 
-def train_test_split(dataset: List, ratio: float)-> Tuple[List]:
+def train_test_split(dataset: list[dict[str, list[str]]], ratio: float)-> tuple[list[dict[str, list[str]]], list[dict[str, list[str]]]]:
     """ Simple train test split of a dataset,
     that is a namedtuple.
     """
@@ -61,13 +61,13 @@ def train_test_split(dataset: List, ratio: float)-> Tuple[List]:
     return train_data, test_data
 
 
-def clean_dataset(data: Dict[str, str], stopwords: List = [])-> Dict[str, List[str]]:
+def clean_dataset(data: list[dict[str, str]], stopwords: list = [])-> list[dict[str, list[str]]]:
     """ Takes a string value in a dict into a list of words, lowers them and only keeps
     those that are only letters.
     """
-    cleaned = []
+    cleaned: list = []
     for dict in data:
-        text = []
+        text: list = []
         for key, value in dict.items():
             for word in value.split(" "):
                 if word.isalpha() and word not in stopwords:
