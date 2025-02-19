@@ -1,12 +1,19 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd 
 
+from config import BASE_DIR, DATA_PATH
+
+
 
 # Read data into a Pandas DataFrame
-df = pd.read_csv("data/emails/email.csv")
+df = pd.read_csv(BASE_DIR / DATA_PATH / "emails" / "email.csv")
 # Select features (X) and labels (y)
 X = df['Message']
 y = df['Category']

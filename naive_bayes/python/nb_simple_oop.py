@@ -1,5 +1,8 @@
+import sys
 from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 from utils.py_utils import build_dataset, train_test_split, clean_dataset
+from config import BASE_DIR, DATA_PATH
 
 
 class NaiveBayesClassifier():
@@ -59,8 +62,9 @@ class NaiveBayesClassifier():
 
 
 # Create the dataset from a csv file
-email_path: str = 'data/emails/email.csv'
-dataset = build_dataset(email_path)
+path: Path = BASE_DIR / DATA_PATH / "emails" / "email.csv"
+
+dataset = build_dataset(path)
 # Clean the data
 cleaned = clean_dataset(dataset)
 # Train test split_index

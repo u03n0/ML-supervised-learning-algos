@@ -2,9 +2,14 @@ import numpy as np
 from numpy.linalg import norm
 from typing import List, Tuple
 from collections import namedtuple
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 from utils.py_utils import build_dataset, tf_idf, train_test_split, idf, tf
+from config import BASE_DIR, DATA_PATH
 
 from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 class KNN():
@@ -68,7 +73,7 @@ def build_tf_idf_matrix(corpus: List[namedtuple])-> Tuple[List, List]:
 
 
 Email = namedtuple('Email', "category, text")
-path_to_data = "data/emails/email.csv"
+path_to_data = BASE_DIR / DATA_PATH / "emails" / "email.csv"
 dataset = build_dataset(path_to_data)
 
 

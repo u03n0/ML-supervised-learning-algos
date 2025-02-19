@@ -4,7 +4,7 @@ from math import log
 from pathlib import Path
 
 
-def build_dataset(path: str)-> list[dict[str, str]]:
+def build_dataset(path: Path)-> list[dict[str, str]]:
     """ Reads csv file and builds dataset as a list of dicts
     """
     l: list = []

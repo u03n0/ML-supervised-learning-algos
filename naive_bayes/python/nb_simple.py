@@ -1,6 +1,13 @@
-from typing import List, Dict
-from utils.py_utils import build_dataset, train_test_split, clean_dataset
 import time
+import sys
+
+
+from typing import List, Dict
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from utils.py_utils import build_dataset, train_test_split, clean_dataset
+from config import BASE_DIR, DATA_PATH
 
 start_time = time.time()
 
@@ -38,8 +45,8 @@ def compute_product(text: dict[str, list[str]], histogram: dict[str, int], num_w
 
 
 # Create the dataset from a csv file
-email_path: str = 'data/emails/email.csv'
-dataset: list[dict[str, str]] = build_dataset(email_path)
+path: Path = BASE_DIR / DATA_PATH / "emails" / "email.csv"
+dataset: list[dict[str, str]] = build_dataset(path)
 # Clean the data
 clean: list[dict[str, list[str]]] = clean_dataset(dataset)
 # Train test split_index

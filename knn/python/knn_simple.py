@@ -1,8 +1,11 @@
+import sys
 from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 from numpy.linalg import norm
 import numpy as np
 from utils.py_utils  import build_dataset, train_test_split, clean_dataset, idf, tf
 from numba import jit
+from config import BASE_DIR, DATA_PATH
 
 
 def build_tf_idf_matrix(corpus: list[dict[str, list[str]]]) -> np.ndarray:
@@ -61,8 +64,8 @@ def classify_point(dataset: list[dict[str, list[str]]], point, k: int = 3)-> str
 
 
 # Load data from csv file
-path_to_data: str = "data/emails/email.csv"
-with open(Path("data/stopwords_en.txt"), 'r') as file:
+path_to_data: Path = BASE_DIR / DATA_PATH / "emails" / "email.csv"
+with open(Path(BASE_DIR / DATA_PATH / "stopwords_en.txt"), 'r') as file:
     stopwords: list = [file.read().replace('\n', ',')]
  
 dataset = build_dataset(path_to_data)
