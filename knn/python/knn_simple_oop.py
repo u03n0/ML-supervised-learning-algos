@@ -1,31 +1,18 @@
-import numpy as np
-from numpy.linalg import norm
-from typing import List, Tuple
-from collections import namedtuple
 import sys
+import time
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
-from utils.py_utils import build_dataset, tf_idf, train_test_split, idf, tf
+from utils.py_utils import build_dataset,train_test_split, clean_dataset, get_tf_idf, cosine_similarity
 from config import BASE_DIR, DATA_PATH
 
-from sklearn.metrics.pairwise import cosine_similarity
 
-
+start_time = time.time()
 
 class KNN():
 
-    def __init__(self,points, k):
+    def __init__(self, points, k):
         self.k = k
         self.points = points
-
-
-    def cosine_similarity(self, a, b):
-        """
-
-        """
-        dot_product = np.dot(a, b)
-        return dot_product/ (norm(a)*norm(b))
-
 
     def classify_point(self,  point):
         """
@@ -33,9 +20,10 @@ class KNN():
         """ 
         distance = []
 
-        for tup in self.points:
-            dist = cosine_similarity(point, tup[0])
-            distance.append((dist, tup[1].category))
+        for dict_ in self.points:
+            for label, vector in dict_.items():
+                dist = cosine_similarity(point, vector)
+                distance.append((dist, label))
 
         distance = sorted(distance)[:self.k]
         freq1 = 0 
@@ -50,44 +38,25 @@ class KNN():
 
 
 
-
-
-def build_tf_idf_matrix(corpus: List[namedtuple])-> Tuple[List, List]:
-    """
-
-    """
-
-    vocab = sorted({word.lower() for doc in corpus for word in " ".join(list(doc.values())).split() if word.isalpha()})
-   
-    idf_dict = {term: idf(term, corpus) for term in vocab} 
-    tf_idf_matrix = []
-    for document in corpus:
-        vector = [0] * len(vocab)
-
-        for i, term in enumerate(vocab):
-            vector[i] = tf(term, list(document.values())) * idf_dict[term]
-
-        tf_idf_matrix.append(vector)
-
-    return tf_idf_matrix, vocab
-
-
-Email = namedtuple('Email', "category, text")
 path_to_data = BASE_DIR / DATA_PATH / "emails" / "email.csv"
 dataset = build_dataset(path_to_data)
+cleaned_dataset = clean_dataset(dataset[:300])
+encoded_data = get_tf_idf(cleaned_dataset)
 
-
-
-tf_idf_matrix, vocab = build_tf_idf_matrix(dataset[:500])
-encoded_data = list(zip(tf_idf_matrix, dataset[:500]))
 train_data, test_data = train_test_split(encoded_data, 0.8)
 
 clf = KNN(train_data, k=5)
 correct = 0
 
-for point in test_data:
-    prediction = clf.classify_point(point[0])
-    if prediction == point[1].category:
-        correct += 1 
+for dict_ in test_data:
+
+    for label, vector in dict_.items():
+        prediction = clf.classify_point(vector)
+        if prediction == label:
+            correct += 1 
 
 print(f"Accuracy is : {correct / len(test_data)}")
+
+end_time: float = time.time()
+execution_time: float = end_time - start_time
+print(f"Execution time: {execution_time} milliseconds")

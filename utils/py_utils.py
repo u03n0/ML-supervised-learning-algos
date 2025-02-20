@@ -76,27 +76,29 @@ def get_vocab(corpus: list[dict[str, str]])-> set[str]:
     return vocab
 
 
-def get_tf_idf(corpus: list[dict[str, str]])-> list[dict[str, list[float]]]:
+def get_tf_idf(corpus: list[dict[str, str]]) -> list[dict[str, list[float]]]:
     """ Creates a list of dictionaries in which the key is a label (str) and 
     the value is a vector (list of tf-idf) that represents a text.
-
     """     
-    vocab: set = get_vocab(corpus) # Get a set of all terms in corpus
+    vocab: set = get_vocab(corpus)  # Get a set of all terms in corpus
     vocab_len: int = len(vocab)
-    term_idfs: dict[str, float] = {term: idf(term, corpus) for term in vocab} # Get idf of all terms in vocab
-    results: list = [] # List to store results 
+    
+    # Pre-calculate IDF for all terms in the vocabulary
+    term_idfs: dict[str, float] = {term: idf(term, corpus) for term in vocab}
+    
+    results: list = []  # List to store results 
 
     for document in corpus:
-        term_freq = defaultdict(int) # Dict to hold tf of each term in a document.
-        vector = [0] * vocab_len # Vector of 0s x length of vocab in corpus
-        label = list(document.keys())[0] # The label is the key of each document (dict)
+        term_freq = defaultdict(int)  # Dictionary to hold tf of each term in a document
+        vector = [0] * vocab_len  # Vector of 0s x length of vocab in corpus
+        label = list(document.keys())[0]  # The label is the key of each document (dict)
 
         for text in document.values():
-            for term  in text.split():
-                term_freq[term] = tf(term, text)
+            for term in text.split():
+                term_freq[term] = tf(term, text) # Calculate the tf of each term in document.
 
         for i, term in enumerate(vocab):
-            vector[i] = term_freq.get(term, 0) * term_idfs[term] 
+            vector[i] = term_freq.get(term, 0) * term_idfs[term] # Calculate the tf-idf for each term in vocab
 
         results.append({label: vector})
 
