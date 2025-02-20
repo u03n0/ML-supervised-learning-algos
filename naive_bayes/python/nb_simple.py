@@ -1,13 +1,11 @@
 import time
 import sys
-
-
-from typing import List, Dict
 from pathlib import Path
-
 sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from utils.py_utils import build_dataset, train_test_split, clean_dataset
 from config import BASE_DIR, DATA_PATH
+
 
 start_time = time.time()
 
@@ -16,9 +14,9 @@ def build_historgram(dataset: list[dict[str, list[str]]])-> dict[str, int]:
     """ Builds a histogram, which is a dict with keys being unique words
     and values being the occurence of said word in that category (ham, spam)
     """
-    word_dict: Dict = {}
-    for dict in dataset:
-        for word_list in dict.values():
+    word_dict: dict = {}
+    for dict_ in dataset:
+        for word_list in dict_.values():
             for word in word_list:
                 if word not in word_dict:
                     word_dict[word] = 1 
@@ -26,7 +24,7 @@ def build_historgram(dataset: list[dict[str, list[str]]])-> dict[str, int]:
                     word_dict[word] += 1 
     return word_dict
 
-def compute_product(text: dict[str, list[str]], histogram: dict[str, int], num_words: int, proba: float, alpha: int = 1)->float:
+def compute_product(text: dict[str, list[str]], histogram: dict[str, int], num_words: int, proba: float, alpha: int = 1)-> float:
         """ The product of a document is computed by multiplying the histogram value for each term. Finally the 
         pronbability of a given class is also multiplied. 
 
@@ -44,15 +42,13 @@ def compute_product(text: dict[str, list[str]], histogram: dict[str, int], num_w
         return product * proba
 
 
-# Create the dataset from a csv file
 path: Path = BASE_DIR / DATA_PATH / "emails" / "email.csv"
 dataset: list[dict[str, str]] = build_dataset(path)
-# Clean the data
 clean: list[dict[str, list[str]]] = clean_dataset(dataset)
-# Train test split_index
-train_data, test_data = train_test_split(clean, 0.8) 
-# Get probabilities of ham and spam given total emails
+train_data, test_data = train_test_split(clean, 0.8)  # Train test split_index
+
 len_ham: int = sum([1 for dict in train_data if 'ham' in dict])
+
 ham_proba: float = len_ham / len(train_data) 
 spam_proba: float = 1.0 - ham_proba
 

@@ -1,17 +1,25 @@
 import sys
+import time
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 from utils.py_utils import build_dataset, train_test_split, clean_dataset
 from config import BASE_DIR, DATA_PATH
 
 
+start_time = time.time()
+
+
 class NaiveBayesClassifier():
+    """ Naive Bayes Classifier.
+    """
 
     def __init__(self, alpha: int =1):
         self.alpha = alpha
 
 
     def fit(self, train_data: list[dict[str, list[str]]]):
+        """ Calculates histograms and probabilities need later for prediction.
+        """
         self.hams: list[dict[str, list[str]]] = [dict for dict in train_data if 'ham' in dict]
         self.spams: list[dict[str, list[str]]] = [dict for dict in train_data if 'spam' in dict]
         self.ham_proba: float = len(self.hams) / len(train_data)
@@ -21,8 +29,11 @@ class NaiveBayesClassifier():
         self.num_ham_words = sum(self.ham_histo.values())
         self.num_spam_words = sum(self.spam_histo.values())
        
-    def predict(self, test_data):
-        results = []
+    def predict(self, test_data: list[dict[str, list[str]]]):
+        """ Takes test data and predicts the class for a given 
+        email (text).
+        """
+        results: list = []
         for email in test_data:
             y_pred = list(email.keys())[0]
             product_ham = self.compute_product(email, 'ham')
@@ -31,6 +42,10 @@ class NaiveBayesClassifier():
         return results
 
     def compute_product(self, dict, category):
+        """ Helper method to calculate the product of a text (email),
+        this is done by multiplying the histogram of each word , diviided by the number of words and 
+        finally multiplying it by a probability.
+        """
         product = 1 
         histogram = self.ham_histo if category == 'ham' else self.spam_histo
         num_words = self.num_ham_words if category == 'ham' else self.num_spam_words
@@ -80,3 +95,6 @@ for y_hat, y_pred in predictions:
         correct += 1 
 
 print(f"the accuracy is {correct / len(test_data)}")
+end_time: float = time.time()
+execution_time: float = end_time - start_time
+print(f"Execution time: {execution_time} milliseconds")
