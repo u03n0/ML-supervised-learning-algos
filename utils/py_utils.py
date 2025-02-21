@@ -116,7 +116,17 @@ def train_test_split(dataset: list[dict[str, list[str]]], ratio: float)-> tuple[
     test_data = dataset[split_index:]
     return train_data, test_data
 
-
+def metric_(point: list[float], vector: list[float], metric: str):
+    """ Returns the Euclidean Distance or Cosine Similarity between
+    two vectors depending the value of a string (metric).
+    """
+    if metric == 'euclidean':
+        return euclidean_distance(point, vector)
+    elif metric == 'cosine':
+        return cosine_similarity(point, vector)
+    else:
+        raise ValueError("Unknown metric!")
+    
 @jit(nopython=True)
 def cosine_similarity(a: list[float], b: list[float])-> float:
     """ The dot product of two vectors (a, b) divided
@@ -131,3 +141,8 @@ def cosine_similarity(a: list[float], b: list[float])-> float:
     norm_b = np.linalg.norm(b)
 
     return dot_product / (norm_a * norm_b)
+
+def euclidean_distance(a, b):
+    a = np.array(a)
+    b = np.array(b)
+    return np.linalg.norm(a - b)

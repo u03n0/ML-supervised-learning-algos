@@ -1,13 +1,24 @@
 import sys
 import time
 import random
+import argparse
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
-from utils.py_utils  import build_dataset, train_test_split, clean_dataset, get_tf_idf, cosine_similarity
+from utils.py_utils  import build_dataset, train_test_split, clean_dataset, get_tf_idf, metric_
 from config import BASE_DIR, DATA_PATH
 
 
 start_time = time.time()
+
+parser = argparse.ArgumentParser() # Argument Parser
+parser.add_argument(
+        '--metric', 
+        choices=['euclidean', 'cosine'], 
+        required=True, 
+        help="Choose the distance metric: 'euclidean' or 'cosine'"
+    )
+args = parser.parse_args()
+
 
 def classify_point(dataset: list[dict[str, list[float]]], point: list[float], k: int = 3)-> str:
     """ Finds the top K cosine similarities from the point to all other
@@ -16,10 +27,9 @@ def classify_point(dataset: list[dict[str, list[float]]], point: list[float], k:
     distance: list = []
     for dict_ in dataset:
         for label, vector in dict_.items():
-            dist = cosine_similarity(point, vector)
+            dist = metric_(point, vector, args.metric)
             distance.append((dist, label))
-
-    distance = sorted(distance)[:k]
+    distance = sorted(distance)[:k] if args.metric == 'cosine' else sorted(distance, reverse=True)[:k]
     freq1: int = 0 
     freq2: int = 0 
 
@@ -54,9 +64,9 @@ for dict_ in test_data:
         if y_hat == y_pred:
             correct += 1 
 
-print(f"accuracy is : {correct / len(test_data)}")
+print(f"accuracy is : {correct / len(test_data)} using {args.metric}.")
 
 end_time: float = time.time()
 execution_time: float = end_time - start_time
 print(f"Execution time: {execution_time} milliseconds")
-    
+
