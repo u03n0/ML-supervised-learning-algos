@@ -28,28 +28,21 @@ int main () {
   vec_msv_t train_data, test_data; // Initialize train and test datasets
   std::tie(train_data, test_data) = train_test_split(data, 0.8); // Split data
   
+  vec_msv_t ham_data, spam_data;
   // Get probabilities of ham and spam in training.
   int len_ham {0};
     for (const auto& dict : train_data) {
         if (dict.find("ham") != dict.end()) {
             len_ham++;
+            ham_data.push_back({{"ham", dict.at("ham")}});
+        }
+        if (dict.find("spam") != dict.end()) {
+          spam_data.push_back({{"spam", dict.at("spam")}});
         }
     }
 
   double ham_proba {static_cast<double>(len_ham) / train_data.size()};
   double spam_proba {1.0 - ham_proba};
-  // Separate ham and spam data from training.
-  vec_msv_t ham_data, spam_data;
-  
-  for (const auto& dict : train_data) {
-    if (dict.find("ham") != dict.end()) {
-      ham_data.push_back({{"ham", dict.at("ham")}});
-    }
-    if (dict.find("spam") != dict.end()) {
-      spam_data.push_back({{"spam", dict.at("spam")}});
-    }
-  }
-
   // Create histograms for both ham and spam in training
   map_int_t ham_histogram, spam_histogram; // Create histogram map
   ham_histogram = build_histogram(ham_data);
