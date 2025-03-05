@@ -18,3 +18,4 @@ or those that have the highest similarity (cosine similarity). Those that are cl
 
 - term-frequency (TF): the TF is calculated on a document level. It is the occurence of a term (t) given a document (d) divided by the total count of terms in the document. tf(t,d) = f<sub>t,d</sub>
   
+![Alt Text](../images/knn_algo.png)
