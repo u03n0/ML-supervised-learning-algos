@@ -21,13 +21,10 @@ int main () {
 
   std::string projectRoot {getProjectRoot()}; // Get root path of project
   std::string filename {projectRoot + "/data/emails/email.csv"}; // filename = root + path to data
-                                                                 //
   vec_msv_t  data; // Create map
   data = parseCSV(filename); // Read csv file into array<unordered_map<string, array<string>> 
-                                                                          //
   vec_msv_t train_data, test_data; // Initialize train and test datasets
   std::tie(train_data, test_data) = train_test_split(data, 0.8); // Split data
-  
   vec_msv_t ham_data, spam_data;
   // Get probabilities of ham and spam in training.
   int len_ham {0};
