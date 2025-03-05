@@ -21,7 +21,7 @@ Jupyter notebooks are provided to break down code into smaller parts with explan
 ## Algorithms
 | Model | Python | C++ |
 | --- | --- | --- |
-| KNN | :white_check_mark: | :white_check_mark: |
+| KNN | :white_check_mark: | :hammer: |
 | NaiveBayes | :white_check_mark: | :white_check_mark: |
 | SVM | :hammer: | :hammer: |
 | LinearRegression | :hammer: | :hammer: |
