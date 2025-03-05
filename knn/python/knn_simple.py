@@ -4,44 +4,44 @@ import random
 import argparse
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
-from utils.py_utils  import build_dataset, train_test_split, clean_dataset, get_tf_idf, metric_
+from utils.py_utils  import build_dataset, train_test_split, clean_dataset, get_tf_idf, euclidean_distance
 from config import BASE_DIR, DATA_PATH
 
 
 start_time = time.time()
 
-parser = argparse.ArgumentParser() # Argument Parser
-parser.add_argument(
-        '--metric', 
-        choices=['euclidean', 'cosine'], 
-        required=True, 
-        help="Choose the distance metric: 'euclidean' or 'cosine'"
-    )
-args = parser.parse_args()
+# parser = argparse.ArgumentParser() # Argument Parser
+# parser.add_argument(
+#         '--metric', 
+#         choices=['euclidean', 'cosine'], 
+#         required=True, 
+#         help="Choose the distance metric: 'euclidean' or 'cosine'"
+#     )
+# args = parser.parse_args()
+
+def get_marjority_class(distances: list[tuple[float, str]])-> str:
+    result = {}
+    for item in distances:
+        _, label = item
+        if label not in result:
+            result[label] = 1
+        else:
+            result[label] += 1
+    return max(result, key=result.get)
+
 
 
 def classify_point(dataset: list[dict[str, list[float]]], point: list[float], k: int = 3)-> str:
     """ Finds the top K cosine similarities from the point to all other
     points in the dataset. A point is a vector representation of a document.
     """
-    distance: list = []
+    distances: list = []
     for dict_ in dataset:
         for label, vector in dict_.items():
-            dist = metric_(point, vector, args.metric)
-            distance.append((dist, label))
-    distance = sorted(distance)[:k] if args.metric == 'cosine' else sorted(distance, reverse=True)[:k]
-    freq1: int = 0 
-    freq2: int = 0 
-
-    for item in distance:
-        _, label = item
-        if label == 'ham':
-            freq1 += 1 
-        elif label == 'spam':
-            freq2 += 1 
-    if freq1 == freq2:
-        return random.choice(["ham", "spam"])
-    return 'ham' if freq1 > freq2 else "spam"
+            dist = euclidean_distance(point, vector)
+            distances.append((dist, label))
+    distances = sorted(distances, reverse=True)[:k]
+    return get_marjority_class(distances)
 
 
 
@@ -64,7 +64,7 @@ for dict_ in test_data:
         if y_hat == y_pred:
             correct += 1 
 
-print(f"accuracy is : {correct / len(test_data)} using {args.metric}.")
+print(f"accuracy is : {correct / len(test_data)}.")
 
 end_time: float = time.time()
 execution_time: float = end_time - start_time
