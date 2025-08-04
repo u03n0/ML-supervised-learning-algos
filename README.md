@@ -18,7 +18,7 @@ Go from a low-level to high-level implementation, explanation, and comparison of
 Jupyter notebooks are provided to break down code into smaller parts with explanations.
 ## Algorithms
 | Model | Status |
-| --- | --- | --- |
+| --- | --- |
 | KNN | :white_check_mark: |
 | NaiveBayes | :white_check_mark: |
 | SVM | :hammer: | :hammer: |
